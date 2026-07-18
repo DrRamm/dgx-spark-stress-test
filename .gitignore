@@ -1,0 +1,18 @@
+# Fetched/built by 0-setup.sh - never commit
+llama.cpp/
+stable-diffusion.cpp/
+.venv/
+tools/
+
+# Downloaded models (40-95GB)
+models/
+
+# Run artifacts (each unit's burn-in evidence stays with the unit)
+logs/
+
+# Partial downloads
+*.part
+
+# macOS metadata
+._*
+.DS_Store
