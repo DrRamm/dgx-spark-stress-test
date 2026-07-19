@@ -16,3 +16,6 @@ logs/
 # macOS metadata
 ._*
 .DS_Store
+
+# Local tooling state
+.claude-flow/
