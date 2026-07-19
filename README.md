@@ -189,15 +189,40 @@ chmod +x *.sh tools/dgxtop              # exFAT dropped the executable bits
 At ~1000 MB/s the 79GB transfer takes ~2-4 minutes each way in practice.
 rsync is resumable: if interrupted, rerun the same command and it continues.
 
-### Direct over the network
+### Over LAN Ethernet (laptop -> new unit, with models)
+
+The intended workflow: keep a master copy of this folder *including*
+`models/` (~77GB) on a staging laptop, then seed each new unit over a direct
+Ethernet connection. Expected transfer time for the full ~79GB:
+
+- 1 GbE dongle: ~110 MB/s -> **~12-15 minutes**
+- 10 GbE dongle: typically 400-900 MB/s in practice (SSH becomes the
+  bottleneck before the wire does) -> **~2-4 minutes**
 
 ```bash
-rsync -a --info=progress2 --exclude 'logs/' --exclude '.venv/' \
-    ~/Desktop/gx10-stress-test/ user@new-gx10:~/Desktop/gx10-stress-test/
+# From the laptop, to a factory-fresh unit (default nvidia/nvidia login):
+sshpass -p nvidia rsync -rt --info=progress2 \
+    --exclude 'logs/' --exclude '.venv/' --exclude 'tools/' \
+    ~/dgx-spark-stress-test/ nvidia@<UNIT_IP>:~/Desktop/gx10-stress-test/
+
+# Then on the unit:
+cd ~/Desktop/gx10-stress-test
+chmod +x *.sh          # in case exec bits were lost in transit
+./0-setup.sh           # builds llama.cpp/sd.cpp, fetches tools/dgxtop
+./run.sh               # -> option 3, pick duration, burn it in
 ```
 
-(Add `--exclude 'models/'` to either method if re-downloading ~77GB is
-acceptable; over gigabit LAN the models alone take ~11 min to transfer.)
+To refresh the laptop's master copy of the models from a unit that has them:
+
+```bash
+sshpass -p nvidia rsync -rt --info=progress2 \
+    nvidia@<UNIT_IP>:'~/Desktop/gx10-stress-test/models/' \
+    ~/dgx-spark-stress-test/models/
+```
+
+rsync resumes interrupted transfers: rerun the same command and it continues.
+If both ends have 10 GbE and rsync tops out early, the SSH cipher is the
+limit - `rsync -e "ssh -c aes128-gcm@openssh.com"` is usually the fastest.
 
 Then run `./0-setup.sh` on the new unit — it skips what already works and
 rebuilds what doesn't, and recreates `.venv` and `logs/` fresh. Binaries built
