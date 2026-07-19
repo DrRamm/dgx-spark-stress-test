@@ -199,6 +199,22 @@ Ethernet connection. Expected transfer time for the full ~79GB:
 - 10 GbE dongle: typically 400-900 MB/s in practice (SSH becomes the
   bottleneck before the wire does) -> **~2-4 minutes**
 
+**Direct cable (laptop dongle -> unit's Ethernet port):** there is no DHCP
+on a point-to-point cable, so both ends need static IPs first. Note the
+unit's wired port is `enP7s7` (its WiFi holds the LAN address):
+
+```bash
+# Laptop (interface name from `ip -br link`, e.g. enx...):
+nmcli con mod "Wired connection 2" ipv4.method manual \
+    ipv4.addresses 10.55.0.1/24 ipv4.never-default yes
+nmcli con up "Wired connection 2"
+
+# Unit (over its WiFi/LAN address, or on its console):
+ssh nvidia@<UNIT_LAN_IP> 'echo nvidia | sudo -S ip addr add 10.55.0.2/24 dev enP7s7'
+
+# Verify: ping 10.55.0.2   -> then use 10.55.0.2 as <UNIT_IP> below
+```
+
 ```bash
 # From the laptop, to a factory-fresh unit (default nvidia/nvidia login):
 sshpass -p nvidia rsync -rt --info=progress2 \
