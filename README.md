@@ -33,3 +33,5 @@ All available hwmon and thermal-zone temperatures plus NVIDIA GPU temperature ar
 `run-10h.sh` starts the installed service with a unique name and rejects a concurrent test.
 
 No model download, root workload, disk write benchmark, firmware update, shell-history manipulation, blanket cache deletion or output cleanup. No automatic PASS for pre-existing platform warnings: they remain documented baseline exclusions accepted by the owner.
+
+Current test stop policy: GPU/SoC and other non-NVMe sensors >=90C, NVMe >=70C. 90C was explicitly selected by the owner; it is not represented as a manufacturer continuous-use limit. No CPU duty cycling. Factory thermal management remains enabled.

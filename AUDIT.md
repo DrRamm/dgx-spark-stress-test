@@ -20,7 +20,7 @@ Legacy entry points removed on branch audited-cuda-burnin; upstream history reta
 
 CUDA workload alternates changing 64-bit indexed patterns across the allocated GPU global memory with complete readback comparison in a separate kernel, and 128 TF32-enabled 8192x8192 cuBLAS SGEMMs with complete known-answer output comparison. GPU global allocation uses GB10's physical unified memory. This is not a test of every byte of RAM or every unified-memory migration path, nor a complete instruction-set, NIC or SSD qualification. It does not promise a particular utilization percentage.
 
-Supervisor uses only Python standard library and existing nvidia-smi/journalctl. It preserves pre-existing kernel messages as baseline and stops on NEW kernel messages of priority warning or higher. It stops at GPU >=80C, other hwmon sensors >=85C, NVMe >=70C, MemAvailable <8 GiB, missing/invalid required telemetry, lost heartbeat, nonzero worker exit or missed deadline. These are conservative test policies, not manufacturer-specified thermal limits. Firmware thermoprotection remains intact.
+Supervisor uses only Python standard library and existing nvidia-smi/journalctl. It preserves pre-existing kernel messages as baseline and stops on NEW kernel messages of priority warning or higher. It stops at GPU >=90C, other hwmon sensors >=90C, NVMe >=70C, MemAvailable <8 GiB, missing/invalid required telemetry, lost heartbeat, nonzero worker exit or missed deadline. These are conservative test policies, not manufacturer-specified thermal limits. Firmware thermoprotection remains intact.
 
 The original cpu.cpp adds all hardware CPU threads, each writing and checking a private 32 MiB integer-pattern buffer. Deliberate CPU corruption was detected with exit 4. The final owner-requested duration is 10 hours; systemd enforces 36,200 seconds including startup/cleanup.
 
@@ -39,3 +39,13 @@ Each run has a fresh directory: summary.json (RUNNING/PASS/FAIL/STOPPED), worker
 - Final combined preflight: 80 GiB, 128 GEMMs/cycle, 20 CPU threads, 60-second request: PASS after 73.255 seconds including startup/cleanup; 7 GPU cycles, 102499 CPU buffer cycles, zero mismatches and no new kernel warnings. Peak recorded GPU 66C, hottest ACPI/SoC sensor 82.6C.
 - Final template operator-stop validation preserved STOPPED and left no workload processes.
 - The 10-hour result remains RUNNING until the on-device summary records completion. Short preflights do not establish 10-hour stability.
+
+## Owner-authorized thermal policy revision
+
+On 15 November 2026 the owner requested official limits or a 90C test guard. Read-only inspection of this MSI found every ACPI thermal zone critical trip at 104800 millidegrees C. This is an emergency trip, not an approved sustained operating limit. Published MSI/NVIDIA hardware pages examined did not establish a sustained die/ACPI-zone limit; ambient operating temperature must not be substituted for die temperature.
+
+The test guard is now 90C GPU and non-NVMe sensors, with the independent 70C NVMe guard retained. Early CPU pause/resume logic was discarded: full CPU and GPU workloads remain continuous. Factory thermal protection, fans, clocks, power caps and firmware are unchanged.
+
+The earlier 10-hour attempt stopped after 84.25 seconds at 85.2C under the old guard, without data mismatches or new kernel warnings. A brief experimental adaptive preflight failed on an 8-second nvidia-smi timeout during startup, not a thermal or computation fault; that experimental revision was discarded. Reporting retains both failed attempts. The previously tested 10-second sampling supervisor is used, with only the owner-authorized guard and corresponding tests changed.
+
+Sources inspected: https://ipc.msi.com/product_detail/EdgeXpert-MS-C931 and https://docs.nvidia.com/dgx/dgx-spark/hardware.html . The device's own sysfs trip-point snapshot is saved on the MSI.

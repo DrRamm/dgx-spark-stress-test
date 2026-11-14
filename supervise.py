@@ -44,12 +44,12 @@ def sensor_readings(root=Path('/sys/class/hwmon')):
 def policy(gpu_temp, available, sensors):
     if not math.isfinite(gpu_temp) or gpu_temp < 0:
         return 'GPU temperature invalid'
-    if gpu_temp >= 80:
-        return 'GPU temperature >= 80C'
+    if gpu_temp >= 90:
+        return 'GPU temperature >= 90C'
     if available < 8 * GIB:
         return 'host MemAvailable < 8 GiB'
     for name, value in sensors.items():
-        limit = 70 if name.startswith('nvme:') else 85
+        limit = 70 if name.startswith('nvme:') else 90
         if value >= limit:
             return f'{name} temperature >= {limit}C'
     return None
