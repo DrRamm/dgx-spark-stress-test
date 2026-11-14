@@ -25,3 +25,5 @@ logs/
 __pycache__/
 
 /cpu
+
+/SOURCE_SHA256SUMS

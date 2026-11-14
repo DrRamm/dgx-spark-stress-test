@@ -49,3 +49,7 @@ The test guard is now 90C GPU and non-NVMe sensors, with the independent 70C NVM
 The earlier 10-hour attempt stopped after 84.25 seconds at 85.2C under the old guard, without data mismatches or new kernel warnings. A brief experimental adaptive preflight failed on an 8-second nvidia-smi timeout during startup, not a thermal or computation fault; that experimental revision was discarded. Reporting retains both failed attempts. The previously tested 10-second sampling supervisor is used, with only the owner-authorized guard and corresponding tests changed.
 
 Sources inspected: https://ipc.msi.com/product_detail/EdgeXpert-MS-C931 and https://docs.nvidia.com/dgx/dgx-spark/hardware.html . The device's own sysfs trip-point snapshot is saved on the MSI.
+
+### 90C guard validation outcome
+
+The 180-second full-load preflight ended FAIL after 193.329 seconds including startup/final sampling/cleanup: hottest acpitz_4 reading 91.1C, peak GPU average 75C. Polling is discrete, so a 90C stop policy can observe an overshoot. GPU workload completed 27 fully verified cycles (128 GEMMs/cycle and 80 GiB checked memory); CPU completed 261025 checked buffer cycles. Both worker exits were zero and there were no new kernel warnings. The supervisor correctly withheld PASS because its temperature guard was crossed. No repeat 10-hour attempt was started. This establishes a test-policy stop, not a confirmed manufacturer thermal fault.
