@@ -19,3 +19,9 @@ logs/
 
 # Local tooling state
 .claude-flow/
+
+# Original replacement build/test artifacts
+/burnin
+__pycache__/
+
+/cpu
