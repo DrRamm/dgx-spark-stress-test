@@ -7,7 +7,7 @@ User=e
 SupplementaryGroups=adm
 Environment=CUDA_CACHE_DISABLE=1
 Environment=PYTHONDONTWRITEBYTECODE=1
-ExecStart=/usr/bin/python3 /home/e/acceptance/burnin-suite/supervise.py --seconds 36000 --gib 80 --worker /home/e/acceptance/burnin-suite/burnin --cpu-worker /home/e/acceptance/burnin-suite/cpu --output /home/e/acceptance/burnin-runs/10h-%i
+ExecStart=/usr/bin/python3 /home/e/acceptance/burnin-suite/supervise.py --seconds 14400 --gib 80 --worker /home/e/acceptance/burnin-suite/burnin --cpu-worker /home/e/acceptance/burnin-suite/cpu --output /home/e/acceptance/burnin-runs/4h-%i
 NoNewPrivileges=yes
 ProtectSystem=strict
 ProtectHome=read-only
@@ -19,7 +19,7 @@ MemorySwapMax=0
 UMask=0077
 KillMode=control-group
 TimeoutStopSec=30
-RuntimeMaxSec=36200
+RuntimeMaxSec=14600
 Restart=no
 StandardOutput=journal
 StandardError=journal

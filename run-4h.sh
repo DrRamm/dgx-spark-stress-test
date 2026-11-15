@@ -8,4 +8,4 @@ fi
 instance=$(date -u +%Y%m%dT%H%M%SZ)
 unit="msi-burnin@${instance}.service"
 sudo systemctl start "$unit"
-printf 'Service: %s\nReports: /home/e/acceptance/burnin-runs/10h-%s/\nStop: sudo systemctl stop %s\nHourly output: journalctl -fu %s\n' "$unit" "$instance" "$unit" "$unit"
+printf 'Service: %s\nReports: /home/e/acceptance/burnin-runs/4h-%s/\nStop: sudo systemctl stop %s\nHourly output: journalctl -fu %s\n' "$unit" "$instance" "$unit" "$unit"

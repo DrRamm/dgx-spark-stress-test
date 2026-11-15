@@ -6,12 +6,12 @@ class Guards(unittest.TestCase):
     def test_healthy(self):
         self.assertIsNone(policy(60, 20*GIB, {'acpitz:temp1_input': 65, 'nvme:temp1_input': 45}))
     def test_temperature_limits(self):
-        self.assertIsNotNone(policy(90, 20*GIB, {}))
+        self.assertIsNotNone(policy(99, 20*GIB, {}))
         self.assertIsNotNone(policy(50, 20*GIB, {'nvme:temp1_input': 70}))
-        self.assertIsNotNone(policy(50, 20*GIB, {'acpitz:temp1_input': 90}))
-    def test_authorized_ninety_degree_boundary(self):
-        self.assertIsNone(policy(89.9, 20*GIB, {'acpitz_0:hwmon0:temp1_input':89.9}))
-        self.assertIsNotNone(policy(90, 20*GIB, {}))
+        self.assertIsNotNone(policy(50, 20*GIB, {'acpitz:temp1_input': 99}))
+    def test_authorized_ninety_nine_degree_boundary(self):
+        self.assertIsNone(policy(98.9, 20*GIB, {'acpitz_0:hwmon0:temp1_input':98.9}))
+        self.assertIsNotNone(policy(99, 20*GIB, {}))
     def test_memory_and_sensor_failure(self):
         self.assertIsNotNone(policy(50, 7*GIB, {}))
         self.assertIsNotNone(policy(float('nan'), 20*GIB, {}))

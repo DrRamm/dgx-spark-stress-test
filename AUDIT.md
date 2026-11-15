@@ -53,3 +53,7 @@ Sources inspected: https://ipc.msi.com/product_detail/EdgeXpert-MS-C931 and http
 ### 90C guard validation outcome
 
 The 180-second full-load preflight ended FAIL after 193.329 seconds including startup/final sampling/cleanup: hottest acpitz_4 reading 91.1C, peak GPU average 75C. Polling is discrete, so a 90C stop policy can observe an overshoot. GPU workload completed 27 fully verified cycles (128 GEMMs/cycle and 80 GiB checked memory); CPU completed 261025 checked buffer cycles. Both worker exits were zero and there were no new kernel warnings. The supervisor correctly withheld PASS because its temperature guard was crossed. No repeat 10-hour attempt was started. This establishes a test-policy stop, not a confirmed manufacturer thermal fault.
+
+## Current owner-requested run: four hours, 99C
+
+The owner explicitly requested a 99C guard and four-hour full-load run. Changed only GPU/non-NVMe stop thresholds to 99C, default duration to 14400 seconds, service hard deadline to 14600 seconds and run-directory/launcher names. SSD remains 70C; all computation, kernel-error, telemetry and memory guards remain. CPU duty cycling remains disabled. Factory thermal management and trip points remain unchanged. The prior 90C result is retained as history; the four-hour result must be read from its new run directory.
