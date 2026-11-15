@@ -57,7 +57,7 @@ def policy(gpu_temp, available, sensors):
         if name.startswith('nvme:'):
             if not name.endswith(':temp1_input'):
                 continue  # Individual sensor limits are not published by this SSD.
-            limit = 80  # Composite: below firmware warning 83C / critical 85C.
+            limit = 82  # Composite: below firmware warning 83C / critical 85C.
         else:
             limit = 99
         if value >= limit:

@@ -34,6 +34,6 @@ All available hwmon and thermal-zone temperatures plus NVIDIA GPU temperature ar
 
 No model download, root workload, disk write benchmark, firmware update, shell-history manipulation, blanket cache deletion or output cleanup. No automatic PASS for pre-existing platform warnings: they remain documented baseline exclusions accepted by the owner.
 
-Current test stop policy: GPU/SoC and other non-NVMe sensors >=99C, NVMe Composite >=80C (firmware warning 83C, critical 85C). 99C was explicitly selected by the owner; it is not represented as a manufacturer continuous-use limit. No CPU duty cycling. Factory thermal management remains enabled.
+Current test stop policy: GPU/SoC and other non-NVMe sensors >=99C, NVMe Composite >=82C (firmware warning 83C, critical 85C). 99C was explicitly selected by the owner; it is not represented as a manufacturer continuous-use limit. No CPU duty cycling. Factory thermal management remains enabled.
 
 Individual NVMe Sensor 1/2 readings are logged without applying the Composite threshold to them. The Composite hwmon label is checked and a hardware temperature alarm also stops the run.

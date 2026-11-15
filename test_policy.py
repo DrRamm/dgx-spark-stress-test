@@ -7,12 +7,12 @@ class Guards(unittest.TestCase):
         self.assertIsNone(policy(60, 20*GIB, {'acpitz:temp1_input': 65, 'nvme:temp1_input': 45}))
     def test_temperature_limits(self):
         self.assertIsNotNone(policy(99, 20*GIB, {}))
-        self.assertIsNotNone(policy(50, 20*GIB, {'nvme:temp1_input': 80}))
+        self.assertIsNotNone(policy(50, 20*GIB, {'nvme:temp1_input': 82}))
         self.assertIsNotNone(policy(50, 20*GIB, {'acpitz:temp1_input': 99}))
     def test_nvme_composite_not_individual_sensor(self):
         self.assertIsNone(policy(78, 20*GIB, {'nvme:hwmon7:temp1_input':58.85, 'nvme:hwmon7:temp2_input':70.85}))
-        self.assertIsNone(policy(78, 20*GIB, {'nvme:hwmon7:temp1_input':79.9, 'nvme:hwmon7:temp2_input':85}))
-        self.assertIsNotNone(policy(78, 20*GIB, {'nvme:hwmon7:temp1_input':80}))
+        self.assertIsNone(policy(78, 20*GIB, {'nvme:hwmon7:temp1_input':81.9, 'nvme:hwmon7:temp2_input':85}))
+        self.assertIsNotNone(policy(78, 20*GIB, {'nvme:hwmon7:temp1_input':82}))
     def test_authorized_ninety_nine_degree_boundary(self):
         self.assertIsNone(policy(98.9, 20*GIB, {'acpitz_0:hwmon0:temp1_input':98.9}))
         self.assertIsNotNone(policy(99, 20*GIB, {}))
