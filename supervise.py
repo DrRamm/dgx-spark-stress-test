@@ -25,6 +25,11 @@ def sensor_readings(root=Path('/sys/class/hwmon')):
     readings = {}
     for folder in root.glob('hwmon*'):
         name = (folder / 'name').read_text().strip()
+        if name == 'nvme':
+            if (folder / 'temp1_label').read_text().strip() != 'Composite':
+                raise RuntimeError('NVMe Composite sensor mapping changed')
+            if int((folder / 'temp1_alarm').read_text()) != 0:
+                raise RuntimeError('NVMe Composite hardware temperature alarm')
         for item in folder.glob('temp*_input'):
             value = float(item.read_text()) / 1000
             if not math.isfinite(value):
@@ -37,7 +42,7 @@ def sensor_readings(root=Path('/sys/class/hwmon')):
         readings[f'thermal:{zone.name}:{(zone / "type").read_text().strip()}'] = value
     if not any(key.startswith('acpitz') for key in readings):
         raise RuntimeError('ACPI temperature sensors unavailable')
-    if not any(key.startswith('nvme:') for key in readings):
+    if not any(key.startswith('nvme:') and key.endswith(':temp1_input') for key in readings):
         raise RuntimeError('NVMe temperature sensors unavailable')
     return readings
 
@@ -49,7 +54,12 @@ def policy(gpu_temp, available, sensors):
     if available < 8 * GIB:
         return 'host MemAvailable < 8 GiB'
     for name, value in sensors.items():
-        limit = 70 if name.startswith('nvme:') else 99
+        if name.startswith('nvme:'):
+            if not name.endswith(':temp1_input'):
+                continue  # Individual sensor limits are not published by this SSD.
+            limit = 80  # Composite: below firmware warning 83C / critical 85C.
+        else:
+            limit = 99
         if value >= limit:
             return f'{name} temperature >= {limit}C'
     return None

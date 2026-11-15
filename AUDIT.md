@@ -57,3 +57,9 @@ The 180-second full-load preflight ended FAIL after 193.329 seconds including st
 ## Current owner-requested run: four hours, 99C
 
 The owner explicitly requested a 99C guard and four-hour full-load run. Changed only GPU/non-NVMe stop thresholds to 99C, default duration to 14400 seconds, service hard deadline to 14600 seconds and run-directory/launcher names. SSD remains 70C; all computation, kernel-error, telemetry and memory guards remain. CPU duty cycling remains disabled. Factory thermal management and trip points remain unchanged. The prior 90C result is retained as history; the four-hour result must be read from its new run directory.
+
+## NVMe guard corrected using this device's firmware limits
+
+Exact device SAMSUNG MZALC4T0HBL1-00B07, firmware NXHB202Q: Identify Controller WCTEMP=356 K (about 83C), CCTEMP=358 K (about 85C), explicitly Composite thresholds. Read-only Get Features confirms Composite alarm threshold 83C and thermal-management settings TMT1=81C / TMT2=83C. Samsung's public PM9E1 family page does not publish separate temperature limits for this exact OEM model's internal sensors. No model-specific limit was taken from retailers or another SSD family's datasheet.
+
+The previous blanket 70C NVMe sensor guard was incorrect: it stopped on Sensor 1 at 70.85C while Composite was only 58.85C. Replaced it with an 80C Composite guard, below firmware warning/critical values. All internal sensor readings remain logged; no unsupported per-sensor critical limit is invented. Discovery verifies temp1_label=Composite and stops on temp1_alarm or a changed/missing Composite mapping. All SSD configuration queries were read-only; no firmware alarm or thermal-management settings changed. Tests reproduce the earlier false stop and verify the corrected boundary, label and alarm behavior.
